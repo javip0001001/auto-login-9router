@@ -10,7 +10,7 @@ Auto Login OAuth (ChatGPT/Codex) hàng loạt và import refresh token vào 9rou
 - Windows 10/11 64-bit (hoặc Ubuntu/Linux 64-bit — dùng `start_here.sh`).
 - Máy phải cài sẵn Python 3.11 trở lên (64-bit).
 - Lúc cài Python trên Windows **phải tick**: `Add python.exe to PATH`.
-- Đã cài và đăng nhập [9router](https://9router.com) trên máy.
+- **⚠️ Đã cài, đăng nhập [9router](https://9router.com) trên máy VÀ ĐANG BẬT (đang chạy) trước khi dùng tool.**
 
 ### Tính năng
 - Auto Login OAuth Codex hàng loạt, chạy song song nhiều tài khoản.
@@ -66,7 +66,7 @@ user3@gmail.com|pass789
 - Windows 10/11 64-bit (or Ubuntu/Linux 64-bit — use `start_here.sh`).
 - Python 3.11+ (64-bit) must be installed.
 - On Windows, when installing Python you **must check**: `Add python.exe to PATH`.
-- [9router](https://9router.com) must already be installed and logged in on the machine.
+- **⚠️ [9router](https://9router.com) must be installed, logged in, AND ACTIVELY RUNNING on the machine before using this tool.**
 
 ### Features
 - Bulk OAuth (Codex) auto login, running multiple accounts in parallel.
