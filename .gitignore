@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Playwright
+.playwright/
+
+# Sensitive account data / secrets
+accounts.txt
+accounts_*.txt
+!accounts_sample.txt
+*.env
+.env
+
+# Runtime output / backups
+auto_login_results.json
+backups/
+*.sqlite
+*.sqlite3
+*.log
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

@@ -1,0 +1,10 @@
+# Auto-login ChatGPT accounts
+# Format: email|password|2fa_secret
+# 2fa_secret is optional (leave empty or omit for accounts without 2FA)
+#
+# Examples:
+# user@gmail.com|mypassword123|JBSWY3DPEHPK3PXP
+# user2@gmail.com|password456|
+# user3@gmail.com|pass789
+#
+# Lines starting with # are ignored

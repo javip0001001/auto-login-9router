@@ -1,0 +1,1571 @@
+<!doctype html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>JAVIP AI STORE — 9router Manager</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --surface2: #222633;
+      --border: #2d3348;
+      --text: #e4e6ef;
+      --muted: #8b8fa3;
+      --accent: #6c8cff;
+      --accent2: #4f6fe0;
+      --green: #34d399;
+      --green-bg: rgba(52, 211, 153, .12);
+      --red: #f87171;
+      --red-bg: rgba(248, 113, 113, .12);
+      --yellow: #fbbf24;
+      --mono: "SF Mono", Consolas, monospace;
+      --sans: "Inter", sans-serif;
+      --r: 10px;
+      --shadow: 0 8px 32px rgba(0, 0, 0, .4)
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100vh
+    }
+
+    body {
+      font-family: var(--sans);
+      color: var(--text);
+      background: var(--bg)
+    }
+
+    button,
+    input,
+    textarea {
+      font: inherit
+    }
+
+    button {
+      border: 0;
+      cursor: pointer
+    }
+
+    code {
+      font-family: var(--mono);
+      font-size: .82em;
+      background: var(--surface2);
+      padding: 2px 6px;
+      border-radius: 4px
+    }
+
+    .app {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 24px 16px 60px
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 28px;
+      position: relative
+    }
+
+    .brand-logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 4px
+    }
+
+    .brand-javip {
+      font-size: 2.4rem;
+      background: linear-gradient(135deg, #a78bfa, #6c8cff, #34d399, #fbbf24);
+      background-size: 300% 300%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: gradientShift 4s ease infinite;
+      font-weight: 800;
+      line-height: 1
+    }
+
+    @keyframes gradientShift {
+      0%,100% { background-position: 0% 50% }
+      50% { background-position: 100% 50% }
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 1.9rem;
+      background: linear-gradient(135deg, #a78bfa, #6c8cff, #34d399);
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: gradientShift 4s ease infinite;
+      letter-spacing: -0.5px
+    }
+
+    .vip-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #fbbf24, #f59e0b);
+      color: #1a1d27;
+      font-size: .6rem;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 20px;
+      letter-spacing: 1.5px;
+      vertical-align: middle;
+      margin-left: 8px;
+      text-transform: uppercase;
+      box-shadow: 0 0 12px rgba(251,191,36,.3)
+    }
+
+    header p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: .85rem
+    }
+
+    header .brand-sub {
+      color: #8b8fa3;
+      font-size: .78rem;
+      margin-top: 2px;
+      letter-spacing: 0.3px
+    }
+
+    .status-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 20px;
+      padding: 10px;
+      border-radius: var(--r);
+      font-size: .85rem;
+      font-weight: 600
+    }
+
+    .status-bar.online {
+      background: var(--green-bg);
+      color: var(--green)
+    }
+
+    .status-bar.offline {
+      background: var(--red-bg);
+      color: var(--red)
+    }
+
+    .status-bar .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+      animation: pulse 2s infinite
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1
+      }
+
+      50% {
+        opacity: .4
+      }
+    }
+
+    .tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 18px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0
+    }
+
+    .tab-btn {
+      padding: 10px 18px;
+      background: none;
+      color: var(--muted);
+      font-weight: 600;
+      font-size: .88rem;
+      border-bottom: 2px solid transparent;
+      transition: .15s
+    }
+
+    .tab-btn:hover {
+      color: var(--text)
+    }
+
+    .tab-btn.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent)
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      margin-bottom: 14px;
+      overflow: hidden
+    }
+
+    .panel-head {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border)
+    }
+
+    .panel-head h2 {
+      margin: 0;
+      font-size: 1rem
+    }
+
+    .panel-head p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: .84rem
+    }
+
+    .panel-body {
+      padding: 16px
+    }
+
+    textarea {
+      display: block;
+      width: 100%;
+      min-height: 200px;
+      resize: vertical;
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 12px;
+      background: var(--surface2);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: .81rem;
+      line-height: 1.5
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: var(--accent)
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 8px 16px;
+      border-radius: var(--r);
+      font-size: .88rem;
+      font-weight: 700;
+      transition: .15s
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: var(--accent2)
+    }
+
+    .btn-primary:disabled {
+      opacity: .4;
+      cursor: not-allowed
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted)
+    }
+
+    .btn-ghost:hover {
+      background: var(--surface2);
+      color: var(--text)
+    }
+
+    .btn-danger {
+      background: var(--red-bg);
+      color: var(--red);
+      border: 1px solid rgba(248, 113, 113, .2)
+    }
+
+    .btn-danger:hover {
+      background: rgba(248, 113, 113, .2)
+    }
+
+    .btn-block {
+      width: 100%;
+      min-height: 44px;
+      font-size: .95rem
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 14px
+    }
+
+    .stat {
+      padding: 12px;
+      background: var(--surface2);
+      border-radius: var(--r);
+      text-align: center
+    }
+
+    .stat-val {
+      font-family: var(--mono);
+      font-size: 1.4rem;
+      font-weight: 800
+    }
+
+    .stat-label {
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: .78rem
+    }
+
+    .stat-val.green {
+      color: var(--green)
+    }
+
+    .stat-val.yellow {
+      color: var(--yellow)
+    }
+
+    .stat-val.red {
+      color: var(--red)
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .84rem
+    }
+
+    th,
+    td {
+      padding: 8px 10px;
+      text-align: left;
+      border-bottom: 1px solid var(--border)
+    }
+
+    th {
+      background: var(--surface2);
+      color: var(--muted);
+      font-size: .78rem;
+      font-weight: 700;
+      position: sticky;
+      top: 0;
+      z-index: 1
+    }
+
+    .tbl-wrap {
+      max-height: 320px;
+      overflow: auto;
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      margin-bottom: 14px
+    }
+
+    .cell-clip {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap
+    }
+
+    .empty-cell {
+      color: var(--muted);
+      text-align: center;
+      padding: 24px !important
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: .72rem;
+      font-weight: 700
+    }
+
+    .tag-new {
+      background: var(--green-bg);
+      color: var(--green)
+    }
+
+    .tag-exist {
+      background: rgba(108, 140, 255, .12);
+      color: var(--accent)
+    }
+
+    .tag-plus {
+      background: rgba(251, 191, 36, .12);
+      color: var(--yellow)
+    }
+
+    .option-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 12px;
+      margin: 12px 0 14px;
+      background: linear-gradient(135deg, rgba(108, 140, 255, .10), rgba(52, 211, 153, .07));
+      border: 1px solid rgba(108, 140, 255, .22);
+      border-radius: var(--r)
+    }
+
+    .option-card input {
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      accent-color: var(--accent)
+    }
+
+    .option-card label {
+      display: block;
+      font-weight: 700;
+      font-size: .88rem;
+      cursor: pointer
+    }
+
+    .option-card small {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: .75rem;
+      line-height: 1.45
+    }
+
+    .msg {
+      padding: 12px;
+      border-radius: var(--r);
+      margin-bottom: 12px;
+      font-size: .85rem;
+      display: none
+    }
+
+    .msg.show {
+      display: block
+    }
+
+    .msg.ok {
+      background: var(--green-bg);
+      color: var(--green)
+    }
+
+    .msg.err {
+      background: var(--red-bg);
+      color: var(--red)
+    }
+
+    .info-box {
+      margin-bottom: 14px;
+      padding: 12px;
+      border-left: 3px solid var(--accent);
+      background: rgba(108, 140, 255, .06);
+      border-radius: 0 var(--r) var(--r) 0;
+      font-size: .85rem;
+      color: var(--muted);
+      line-height: 1.5
+    }
+
+    .info-box strong {
+      color: var(--text);
+      display: block;
+      margin-bottom: 4px
+    }
+
+    .info-box a {
+      color: var(--accent)
+    }
+
+    .hidden {
+      display: none !important
+    }
+
+    .del-btn {
+      background: none;
+      border: none;
+      color: var(--red);
+      cursor: pointer;
+      font-size: .8rem;
+      opacity: .5;
+      transition: .15s
+    }
+
+    .del-btn:hover {
+      opacity: 1
+    }
+
+    .drop-zone {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 80px;
+      border: 2px dashed var(--border);
+      border-radius: var(--r);
+      background: var(--surface2);
+      cursor: pointer;
+      transition: .15s;
+      margin-bottom: 14px;
+      color: var(--muted);
+      font-size: .88rem
+    }
+
+    .drop-zone:hover,
+    .drop-zone.drag {
+      border-color: var(--accent);
+      background: rgba(108, 140, 255, .06)
+    }
+  </style>
+</head>
+
+<body>
+  <main class="app">
+
+    <header>
+      <div class="brand-logo">
+        <span class="brand-javip">∞</span>
+        <div>
+          <h1>JAVIP AI STORE <span class="vip-badge">VIP</span></h1>
+          <p>9router Account Manager — Codex OAuth Automation</p>
+        </div>
+      </div>
+      <div class="brand-sub">🔒 Exclusive Tool · Auto Login · Bulk Import · Refresh Token</div>
+    </header>
+
+    <div class="status-bar offline" id="status-bar">
+      <span class="dot"></span>
+      <span id="status-text">Đang kết nối...</span>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="oauth">🔐 OAuth Login</button>
+      <button class="tab-btn" data-tab="import">Import Session</button>
+      <button class="tab-btn" data-tab="accounts">Tài khoản hiện có</button>
+      <button class="tab-btn" data-tab="file">Import từ file</button>
+    </div>
+
+    <!-- TAB 1: Import Session -->
+    <section class="tab-content hidden" id="tab-import">
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Dán Session ChatGPT</h2>
+          <p>Lấy từ <code>chatgpt.com/api/auth/session</code> — hỗ trợ 1 hoặc nhiều session</p>
+        </div>
+        <div class="panel-body">
+          <div class="info-box">
+            <strong>Cách lấy session</strong>
+            Đăng nhập ChatGPT → mở <a href="https://chatgpt.com/api/auth/session"
+              target="_blank">chatgpt.com/api/auth/session</a> → copy JSON → dán vào đây.
+          </div>
+          <div class="actions">
+            <button class="btn btn-ghost" id="btn-clear">Xóa</button>
+          </div>
+          <textarea id="session-input" spellcheck="false"
+            placeholder='Dán JSON session ở đây...&#10;&#10;{"user":{"email":"you@gmail.com"},"accessToken":"eyJ...","expires":"2026-..."}'></textarea>
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-val green" id="s-parsed">0</div>
+          <div class="stat-label">Đã parse</div>
+        </div>
+        <div class="stat">
+          <div class="stat-val yellow" id="s-skip">0</div>
+          <div class="stat-label">Đã có (sẽ update)</div>
+        </div>
+        <div class="stat">
+          <div class="stat-val" id="s-err">0</div>
+          <div class="stat-label">Lỗi</div>
+        </div>
+      </div>
+
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Email</th>
+              <th>Plan</th>
+              <th>Hết hạn</th>
+            </tr>
+          </thead>
+          <tbody id="preview-body">
+            <tr>
+              <td colspan="4" class="empty-cell">Chưa có session.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="msg" id="import-msg"></div>
+
+      <button class="btn btn-primary btn-block" id="btn-import" disabled>
+        ⚡ Import vào 9router
+      </button>
+      <div style="height:8px"></div>
+      <button class="btn btn-ghost btn-block" id="btn-download" disabled>
+        ⬇ Tải xuống JSON (nếu server offline)
+      </button>
+    </section>
+
+    <!-- TAB 2: Accounts -->
+    <section class="tab-content hidden" id="tab-accounts">
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Codex accounts trong 9router</h2>
+          <p>Danh sách accounts đang có trong SQLite database</p>
+        </div>
+        <div class="panel-body">
+          <div class="actions">
+            <button class="btn btn-ghost" id="btn-refresh">🔄 Refresh</button>
+          </div>
+          <div id="acc-count" style="color:var(--muted);font-size:.85rem;margin-bottom:10px"></div>
+          <div class="tbl-wrap" style="max-height:500px">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Email</th>
+                  <th>Plan</th>
+                  <th>Hết hạn</th>
+                  <th>Trạng thái</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="acc-body">
+                <tr>
+                  <td colspan="6" class="empty-cell">Đang tải...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: Import từ file (multi-file) -->
+    <section class="tab-content hidden" id="tab-file">
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Import từ file JSON</h2>
+          <p>Chọn nhiều file — hỗ trợ cả <strong>session ChatGPT</strong> lẫn <strong>backup 9router</strong></p>
+        </div>
+        <div class="panel-body">
+          <input type="file" id="file-input" accept=".json" class="hidden" multiple />
+          <div class="drop-zone" id="drop-zone">📂 Kéo thả hoặc click để chọn file JSON (chọn nhiều file)</div>
+
+          <div class="stats" id="file-stats" style="display:none">
+            <div class="stat">
+              <div class="stat-val green" id="fs-files">0</div>
+              <div class="stat-label">File đã chọn</div>
+            </div>
+            <div class="stat">
+              <div class="stat-val green" id="fs-total">0</div>
+              <div class="stat-label">Tổng accounts</div>
+            </div>
+            <div class="stat">
+              <div class="stat-val" id="fs-err">0</div>
+              <div class="stat-label">File lỗi</div>
+            </div>
+          </div>
+
+          <!-- File list -->
+          <div id="file-list" style="margin-bottom:14px"></div>
+
+          <div class="tbl-wrap" style="max-height:400px">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Email</th>
+                  <th>Plan</th>
+                  <th>Hết hạn</th>
+                  <th>Nguồn</th>
+                </tr>
+              </thead>
+              <tbody id="file-body">
+                <tr>
+                  <td colspan="5" class="empty-cell">Chưa chọn file.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div style="display:flex;gap:8px;margin-bottom:10px">
+            <button class="btn btn-ghost" id="btn-file-clear" style="display:none">🗑 Xóa tất cả</button>
+            <button class="btn btn-ghost" id="btn-file-add">+ Thêm file</button>
+          </div>
+
+          <div class="msg" id="file-msg"></div>
+          <button class="btn btn-primary btn-block" id="btn-file-import" disabled>⚡ Import tất cả vào 9router</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: OAuth Login -->
+    <section class="tab-content" id="tab-oauth">
+      <div class="panel">
+        <div class="panel-head">
+          <h2>🔐 Đăng nhập Codex via OAuth</h2>
+          <p>Đăng nhập trực tiếp — lấy <strong>refresh token</strong> (không hết hạn)</p>
+        </div>
+        <div class="panel-body">
+
+          <!-- Mode selector -->
+          <div style="display:flex;gap:8px;margin-bottom:14px">
+            <button class="btn btn-ghost oauth-mode-btn active" data-mode="auto" id="mode-auto">🤖 Auto Login (nhập tài khoản)</button>
+            <button class="btn btn-ghost oauth-mode-btn" data-mode="manual" id="mode-manual">🖱 Manual Login (tự đăng nhập)</button>
+          </div>
+
+          <!-- AUTO MODE -->
+          <div id="oauth-auto-section">
+            <div class="info-box">
+              <strong>Dán danh sách tài khoản</strong>
+              Mỗi dòng 1 tài khoản, cách bởi dấu <code>|</code>:<br>
+              <code>email|password|2fa_secret</code><br><br>
+              🔑 2FA secret là mã TOTP base32 (không bắt buộc). Nếu không có 2FA thì bỏ trống.<br>
+              🤖 Server sẽ tự mở browser, điền email/password/2FA, lấy refresh token.
+            </div>
+
+            <div class="option-card">
+              <input type="checkbox" id="oauth-headless-toggle" />
+              <div>
+                <label for="oauth-headless-toggle">Không hiện cửa sổ Chrome</label>
+                <small>Chạy Chromium ẩn dưới nền. Gọn hơn, nhưng nếu gặp captcha/verify thì nên tắt tùy chọn này.</small>
+              </div>
+            </div>
+            <div class="option-card" style="align-items:center">
+              <div style="flex:1">
+                <label for="oauth-workers-input">Số luồng chạy song song</label>
+                <small>Tự nhập số luồng bạn muốn. Tool chỉ mở tối đa bằng số tài khoản hợp lệ, không có giới hạn cứng.</small>
+              </div>
+              <input id="oauth-workers-input" type="number" min="1" step="1" value="3" inputmode="numeric" aria-label="Số luồng Auto Login" style="width:92px;padding:10px;text-align:center;font-family:var(--mono);font-weight:700" />
+            </div>
+            <textarea id="oauth-accounts-input" spellcheck="false" style="min-height:120px"
+              placeholder="note-toilers.7f@icloud.com|Azb12312345679@|HD7ZSHQCDDZQ2FHFWZEC3ADP7DKAMA5E&#10;user2@gmail.com|password123|&#10;user3@gmail.com|pass456|ABCDEF123456"></textarea>
+
+            <div class="stats" id="oauth-parse-stats" style="display:none">
+              <div class="stat">
+                <div class="stat-val green" id="oa-parsed">0</div>
+                <div class="stat-label">Tài khoản</div>
+              </div>
+              <div class="stat">
+                <div class="stat-val" id="oa-2fa">0</div>
+                <div class="stat-label">Có 2FA</div>
+              </div>
+              <div class="stat">
+                <div class="stat-val green" id="oa-done">0</div>
+                <div class="stat-label">Xong</div>
+              </div>
+              <div class="stat">
+                <div class="stat-val" id="oa-fail">0</div>
+                <div class="stat-label">Lỗi</div>
+              </div>
+            </div>
+
+            <!-- Progress -->
+            <div id="oauth-progress" style="display:none;margin:14px 0">
+              <div style="background:var(--surface2);border-radius:8px;overflow:hidden;height:6px">
+                <div id="oauth-progress-bar" style="height:100%;background:var(--green);width:0%;transition:width .3s"></div>
+              </div>
+              <div id="oauth-progress-text" style="text-align:center;font-size:.8rem;color:var(--muted);margin-top:4px"></div>
+              <div id="oauth-active-workers" style="display:none;margin-top:8px;font-size:.78rem;color:var(--text);text-align:center"></div>
+              <div id="oauth-elapsed" style="text-align:center;font-family:var(--mono);font-size:.78rem;color:var(--green);margin-top:5px;display:none">⏱ Đang chạy: 00:00</div>
+            </div>
+
+            <div style="display:flex;gap:8px;margin-bottom:10px">
+              <button class="btn btn-primary" id="btn-auto-login" style="flex:1;font-size:1rem;padding:14px">
+                🚀 Auto Login tất cả
+              </button>
+              <button class="btn btn-ghost" id="btn-auto-stop" style="display:none">⏹ Dừng</button>
+            </div>
+
+            <div style="font-size:.75rem;color:var(--muted);margin-bottom:10px">
+              ⚠️ Cần chạy import server (<code>python server.py</code>) + đã cài <code>playwright</code> và <code>pyotp</code>
+            </div>
+          </div>
+
+          <!-- MANUAL MODE -->
+          <div id="oauth-manual-section" style="display:none">
+            <div class="info-box">
+              <strong>Login thủ công</strong>
+              Bấm nút → trang OpenAI mở ra → bạn tự đăng nhập → tự động redirect về và import vào 9router.
+              <br><br>
+              ✅ Refresh token không hết hạn — 9router tự refresh mãi mãi.<br>
+              ❌ Phải đăng nhập thủ công từng nick.
+            </div>
+            <button class="btn btn-primary btn-block" id="btn-oauth-login" style="font-size:1rem;padding:14px">
+              🚀 Login ChatGPT (OAuth)
+            </button>
+          </div>
+
+          <div id="oauth-status-box" style="margin:16px 0;padding:16px;border-radius:10px;background:var(--surface2);text-align:center;display:none">
+            <div id="oauth-status-icon" style="font-size:2rem">⏳</div>
+            <div id="oauth-status-text" style="margin-top:8px;font-size:.9rem">Đang chờ đăng nhập...</div>
+          </div>
+
+          <!-- Login history -->
+          <div id="oauth-history" style="margin-bottom:14px"></div>
+
+          <div class="msg" id="oauth-msg"></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    (() => {
+      'use strict';
+      const API = 'http://localhost:9876';
+      const $ = id => document.getElementById(id);
+      let serverOnline = false;
+
+      // === JWT decode ===
+      function b64d(s) { const n = s.replace(/-/g, '+').replace(/_/g, '/').padEnd(Math.ceil(s.length / 4) * 4, '='); return new TextDecoder().decode(Uint8Array.from(atob(n), c => c.charCodeAt(0))) }
+      function jwtP(t) { if (!t || typeof t !== 'string') return null; const p = t.split('.'); if (p.length < 2) return null; try { return JSON.parse(b64d(p[1])) } catch { return null } }
+      function esc(v) { return String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }
+      function fmtDate(v) { if (!v) return '-'; const d = new Date(v); if (isNaN(d)) return String(v); const p = n => String(n).padStart(2, '0'); return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}` }
+
+      // === Health check ===
+      async function checkHealth() {
+        try {
+          const r = await fetch(API + '/api/health', { signal: AbortSignal.timeout(2000) });
+          const d = await r.json();
+          serverOnline = d.ok;
+        } catch { serverOnline = false }
+        const bar = $('status-bar'), txt = $('status-text');
+        bar.className = 'status-bar ' + (serverOnline ? 'online' : 'offline');
+        txt.textContent = serverOnline ? 'Server đang chạy — sẵn sàng import' : 'Server offline — chỉ có thể tải JSON';
+        $('btn-import').textContent = serverOnline ? '⚡ Import vào 9router' : '⚡ Import vào 9router (cần server)';
+      }
+      checkHealth();
+      setInterval(checkHealth, 5000);
+
+      // === Parse sessions ===
+      function parseSession(obj) {
+        const at = obj.accessToken || obj.access_token || obj.token?.accessToken || '';
+        if (!at) return null;
+        const p = jwtP(at);
+        const auth = p?.['https://api.openai.com/auth'] || {};
+        const prof = p?.['https://api.openai.com/profile'] || {};
+        const email = obj.user?.email || obj.email || prof.email || p?.email || null;
+        const accountId = obj.account?.id || obj.providerSpecificData?.chatgptAccountId || auth.chatgpt_account_id || crypto.randomUUID();
+        const planType = obj.account?.planType || obj.providerSpecificData?.chatgptPlanType || auth.chatgpt_plan_type || null;
+        const expiresAt = p?.exp ? new Date(p.exp * 1000).toISOString() : (obj.expires || obj.expiresAt || null);
+        const now = new Date().toISOString();
+        return {
+          accessToken: at,
+          refreshToken: obj.refreshToken || obj.refresh_token || '',
+          expiresAt,
+          idToken: obj.idToken || '',
+          testStatus: 'active',
+          expiresIn: expiresAt ? Math.max(0, Math.floor((new Date(expiresAt) - Date.now()) / 1000)) : 0,
+          providerSpecificData: { chatgptAccountId: accountId, chatgptPlanType: planType },
+          lastUsedAt: now, consecutiveUseCount: 0, backoffLevel: 0,
+          id: accountId, provider: 'codex', authType: 'oauth',
+          name: email || 'ChatGPT Account', email: email || '',
+          priority: 1, isActive: true, createdAt: now, updatedAt: now,
+          _plan: planType, _expires: expiresAt
+        };
+      }
+
+      function collectSessions(val) {
+        const found = [];
+        function walk(v) {
+          if (!v || typeof v !== 'object') return;
+          if (Array.isArray(v)) { v.forEach(walk); return }
+          const at = v.accessToken || v.access_token || v.token?.accessToken;
+          if (at) { const r = parseSession(v); if (r) found.push(r); return }
+          Object.values(v).forEach(walk);
+        }
+        walk(val);
+        return found;
+      }
+
+      // === Tab 1: Import Session ===
+      let parsed = [];
+      const input = $('session-input');
+
+      function processInput() {
+        const t = input.value.trim();
+        if (!t) { parsed = []; renderPreview(); return }
+        try {
+          const val = JSON.parse(t);
+          parsed = collectSessions(val);
+        } catch (e) { parsed = []; $('s-err').textContent = '1'; $('s-err').className = 'stat-val red' }
+        renderPreview();
+      }
+
+      function renderPreview() {
+        $('s-parsed').textContent = parsed.length;
+        $('s-skip').textContent = '0';
+        if (!parsed.length) $('s-err').textContent = '0';
+        const body = $('preview-body');
+        if (!parsed.length) {
+          body.innerHTML = '<tr><td colspan="4" class="empty-cell">Chưa có session.</td></tr>';
+          $('btn-import').disabled = true; $('btn-download').disabled = true;
+          return;
+        }
+        body.innerHTML = parsed.map((c, i) => `<tr><td>${i + 1}</td><td><div class="cell-clip" title="${esc(c.email)}">${esc(c.email || '-')}</div></td><td>${c._plan ? `<span class="tag tag-plus">${esc(c._plan)}</span>` : '-'}</td><td>${fmtDate(c._expires)}</td></tr>`).join('');
+        $('btn-import').disabled = !serverOnline;
+        $('btn-download').disabled = false;
+      }
+
+      input.addEventListener('input', processInput);
+      $('btn-clear').addEventListener('click', () => { input.value = ''; parsed = []; renderPreview(); hideMsg('import-msg') });
+
+      // Import button
+      $('btn-import').addEventListener('click', async () => {
+        if (!parsed.length || !serverOnline) return;
+        $('btn-import').disabled = true;
+        $('btn-import').textContent = 'Đang import...';
+        try {
+          const r = await fetch(API + '/api/import', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ connections: parsed }) });
+          const d = await r.json();
+          if (d.error) { showMsg('import-msg', d.error, 'err'); }
+          else { showMsg('import-msg', `✅ Import thành công! Thêm mới: ${d.inserted}, Ghi đè: ${d.replaced || 0}.`, 'ok'); }
+        } catch (e) { showMsg('import-msg', 'Lỗi kết nối server: ' + e.message, 'err') }
+        $('btn-import').disabled = false;
+        $('btn-import').textContent = '⚡ Import vào 9router';
+        loadAccounts();
+      });
+
+      // Download fallback
+      $('btn-download').addEventListener('click', () => {
+        if (!parsed.length) return;
+        const data = { settings: { cloudEnabled: false, tunnelEnabled: false, tunnelUrl: '', stickyRoundRobinLimit: 3, providerStrategies: {}, comboStrategy: 'fallback', requireLogin: false, rtkEnabled: true }, providerConnections: parsed.map((c, i) => { const o = { ...c }; delete o._plan; delete o._expires; o.priority = i + 1; return o }) };
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+        const email = parsed[0]?.email || 'session';
+        a.download = email.replace(/[^a-z0-9@._-]/gi, '') + '.9router.json';
+        a.click(); URL.revokeObjectURL(a.href);
+      });
+
+      // === Tab 2: Accounts ===
+      async function loadAccounts() {
+        if (!serverOnline) { $('acc-body').innerHTML = '<tr><td colspan="6" class="empty-cell">Server offline</td></tr>'; $('acc-count').textContent = ''; return }
+        try {
+          const r = await fetch(API + '/api/connections');
+          const d = await r.json();
+          const conns = d.connections || [];
+          $('acc-count').textContent = conns.length + ' tài khoản';
+          if (!conns.length) { $('acc-body').innerHTML = '<tr><td colspan="6" class="empty-cell">Chưa có tài khoản nào.</td></tr>'; return }
+          $('acc-body').innerHTML = conns.map((c, i) => {
+            const data = c.data || {};
+            const plan = data.providerSpecificData?.chatgptPlanType || '';
+            const exp = data.expiresAt || '';
+            const status = data.testStatus || 'unknown';
+            const stCls = status === 'active' ? 'green' : status === 'error' ? 'red' : '';
+            return `<tr><td>${c.priority || i + 1}</td><td><div class="cell-clip" title="${esc(c.email)}">${esc(c.email || c.name || '-')}</div></td><td>${plan ? `<span class="tag tag-plus">${esc(plan)}</span>` : '-'}</td><td>${fmtDate(exp)}</td><td><span style="color:var(--${stCls || 'muted'})">${esc(status)}</span></td><td><button class="del-btn" onclick="delConn('${esc(c.id)}')">✕</button></td></tr>`
+          }).join('');
+        } catch { $('acc-body').innerHTML = '<tr><td colspan="6" class="empty-cell">Lỗi kết nối</td></tr>' }
+      }
+
+      window.delConn = async function (id) {
+        if (!confirm('Xóa tài khoản này?')) return;
+        try { await fetch(API + '/api/connections/' + id, { method: 'DELETE' }); loadAccounts() } catch { }
+      };
+
+      $('btn-refresh').addEventListener('click', loadAccounts);
+
+      // === Tab 3: Multi-file import ===
+      // Each entry: { conn, source: filename, type: 'session'|'backup' }
+      let fileEntries = [];
+      let fileNames = [];
+      let fileErrors = 0;
+      const dropZone = $('drop-zone');
+      const fileInput = $('file-input');
+
+      function parseFileContent(raw, fileName) {
+        const results = [];
+
+        // Type 1: 9router backup (has providerConnections array)
+        if (raw.providerConnections && Array.isArray(raw.providerConnections)) {
+          const codex = raw.providerConnections.filter(c => c.provider === 'codex');
+          codex.forEach(c => results.push({ conn: c, source: fileName, type: 'backup' }));
+          return results;
+        }
+
+        // Type 2: Array of connections
+        if (Array.isArray(raw)) {
+          const codex = raw.filter(c => c.provider === 'codex');
+          codex.forEach(c => results.push({ conn: c, source: fileName, type: 'backup' }));
+          if (codex.length) return results;
+          // Try as array of sessions
+          raw.forEach(item => {
+            const s = parseSession(item);
+            if (s) results.push({ conn: s, source: fileName, type: 'session' });
+          });
+          return results;
+        }
+
+        // Type 3: Single codex connection
+        if (raw.provider === 'codex' && raw.accessToken) {
+          results.push({ conn: raw, source: fileName, type: 'backup' });
+          return results;
+        }
+
+        // Type 4: ChatGPT session JSON (has user.email + accessToken)
+        if (raw.accessToken || raw.access_token) {
+          const s = parseSession(raw);
+          if (s) results.push({ conn: s, source: fileName, type: 'session' });
+          return results;
+        }
+
+        // Type 5: Walk nested objects
+        const sessions = collectSessions(raw);
+        sessions.forEach(s => results.push({ conn: s, source: fileName, type: 'session' }));
+        return results;
+      }
+
+      function handleFiles(files) {
+        const promises = Array.from(files).map(file => new Promise(resolve => {
+          const reader = new FileReader();
+          reader.onload = e => {
+            try {
+              const raw = JSON.parse(e.target.result);
+              const results = parseFileContent(raw, file.name);
+              if (results.length) {
+                fileNames.push({ name: file.name, count: results.length, type: results[0].type });
+                fileEntries.push(...results);
+              } else {
+                fileNames.push({ name: file.name, count: 0, type: 'error' });
+                fileErrors++;
+              }
+            } catch (err) {
+              fileNames.push({ name: file.name, count: 0, type: 'error', error: err.message });
+              fileErrors++;
+            }
+            resolve();
+          };
+          reader.readAsText(file);
+        }));
+        Promise.all(promises).then(() => {
+          renderFileImport();
+        });
+      }
+
+      function renderFileImport() {
+        // Stats
+        const statsEl = $('file-stats');
+        statsEl.style.display = fileEntries.length || fileErrors ? 'grid' : 'none';
+        $('fs-files').textContent = fileNames.length;
+        $('fs-total').textContent = fileEntries.length;
+        $('fs-err').textContent = fileErrors;
+        $('fs-err').className = 'stat-val' + (fileErrors ? ' red' : '');
+
+        // File list
+        const listEl = $('file-list');
+        if (fileNames.length) {
+          listEl.innerHTML = fileNames.map(f => {
+            const icon = f.type === 'error' ? '❌' : f.type === 'session' ? '🔑' : '📦';
+            const cls = f.type === 'error' ? 'color:var(--red)' : 'color:var(--green)';
+            const label = f.type === 'session' ? 'session' : f.type === 'backup' ? 'backup' : 'lỗi';
+            const detail = f.type === 'error' ? (f.error || 'Không tìm thấy account') : `${f.count} account`;
+            return `<div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--surface2);border-radius:6px;margin-bottom:4px;font-size:.82rem">
+              <span>${icon}</span>
+              <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(f.name)}">${esc(f.name)}</span>
+              <span class="tag ${f.type === 'session' ? 'tag-new' : f.type === 'backup' ? 'tag-exist' : ''}" style="font-size:.7rem">${label}</span>
+              <span style="${cls};font-weight:600;font-size:.78rem">${detail}</span>
+            </div>`;
+          }).join('');
+        } else {
+          listEl.innerHTML = '';
+        }
+
+        // Table
+        const body = $('file-body');
+        if (!fileEntries.length) {
+          body.innerHTML = '<tr><td colspan="5" class="empty-cell">Chưa chọn file.</td></tr>';
+          $('btn-file-import').disabled = true;
+          $('btn-file-clear').style.display = 'none';
+          dropZone.textContent = '📂 Kéo thả hoặc click để chọn file JSON (chọn nhiều file)';
+          dropZone.style.borderColor = '';
+          return;
+        }
+
+        // Dedup by email (keep latest)
+        const seen = new Map();
+        fileEntries.forEach((e, i) => {
+          const key = (e.conn.email || '').toLowerCase().trim();
+          if (key) seen.set(key, i);
+          else seen.set('__no_email_' + i, i);
+        });
+        const uniqueIndices = [...seen.values()].sort((a, b) => a - b);
+
+        body.innerHTML = uniqueIndices.map((idx, i) => {
+          const e = fileEntries[idx];
+          const c = e.conn;
+          const plan = c.providerSpecificData?.chatgptPlanType || c._plan || '';
+          const exp = c.expiresAt || c._expires || '';
+          const srcShort = e.source.length > 20 ? e.source.slice(0, 18) + '…' : e.source;
+          const typeIcon = e.type === 'session' ? '🔑' : '📦';
+          return `<tr><td>${i + 1}</td><td><div class="cell-clip" title="${esc(c.email)}">${esc(c.email || c.name || '-')}</div></td><td>${plan ? `<span class="tag tag-plus">${esc(plan)}</span>` : '-'}</td><td>${fmtDate(exp)}</td><td><span title="${esc(e.source)}" style="font-size:.75rem">${typeIcon} ${esc(srcShort)}</span></td></tr>`;
+        }).join('');
+
+        dropZone.textContent = `✅ ${fileNames.length} file — ${fileEntries.length} accounts (${uniqueIndices.length} unique)`;
+        dropZone.style.borderColor = 'var(--green)';
+        $('btn-file-import').disabled = !serverOnline;
+        $('btn-file-clear').style.display = '';
+      }
+
+      // Event listeners
+      dropZone.addEventListener('click', () => fileInput.click());
+      dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag') });
+      dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag'));
+      dropZone.addEventListener('drop', e => { e.preventDefault(); dropZone.classList.remove('drag'); if (e.dataTransfer.files.length) handleFiles(e.dataTransfer.files) });
+      fileInput.addEventListener('change', e => { if (e.target.files.length) handleFiles(e.target.files); e.target.value = '' });
+      $('btn-file-add').addEventListener('click', () => fileInput.click());
+      $('btn-file-clear').addEventListener('click', () => {
+        fileEntries = []; fileNames = []; fileErrors = 0;
+        renderFileImport();
+        hideMsg('file-msg');
+      });
+
+      $('btn-file-import').addEventListener('click', async () => {
+        if (!fileEntries.length || !serverOnline) return;
+
+        // Dedup
+        const seen = new Map();
+        fileEntries.forEach((e, i) => {
+          const key = (e.conn.email || '').toLowerCase().trim();
+          if (key) seen.set(key, i);
+          else seen.set('__no_email_' + i, i);
+        });
+        const uniqueConns = [...seen.values()].map(i => fileEntries[i].conn);
+
+        $('btn-file-import').disabled = true;
+        $('btn-file-import').textContent = `Đang import ${uniqueConns.length} accounts...`;
+        try {
+          const r = await fetch(API + '/api/import', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ connections: uniqueConns }) });
+          const d = await r.json();
+          if (d.error) showMsg('file-msg', d.error, 'err');
+          else showMsg('file-msg', `✅ Import thành công! Thêm mới: ${d.inserted}, Ghi đè: ${d.replaced || 0}. Tổng: ${d.total || (d.inserted + (d.replaced || 0))}.`, 'ok');
+        } catch (e) { showMsg('file-msg', 'Lỗi: ' + e.message, 'err') }
+        $('btn-file-import').disabled = false;
+        $('btn-file-import').textContent = '⚡ Import tất cả vào 9router';
+        loadAccounts();
+      });
+
+      // === Tab 4: OAuth Login ===
+      let oauthHistory = [];
+      let oauthPolling = null;
+      let autoPolling = null;
+      let autoStartAt = null;
+      let autoTimer = null;
+      let currentAccountStart = null;
+      let lastCurrentEmail = null;
+
+      function formatDuration(ms) {
+        const total = Math.max(0, Math.floor(ms / 1000));
+        const h = Math.floor(total / 3600);
+        const m = Math.floor((total % 3600) / 60);
+        const s = total % 60;
+        const pad = n => String(n).padStart(2, '0');
+        return h > 0 ? `${pad(h)}:${pad(m)}:${pad(s)}` : `${pad(m)}:${pad(s)}`;
+      }
+
+      function startAutoTimer() {
+        autoStartAt = Date.now();
+        currentAccountStart = Date.now();
+        const el = $('oauth-elapsed');
+        el.style.display = 'block';
+        el.innerHTML = '⏱ Tổng: <span id="timer-total">00:00</span> | Acc: <span id="timer-acc">00:00</span>';
+        if (autoTimer) clearInterval(autoTimer);
+        autoTimer = setInterval(() => {
+          const totalEl = document.getElementById('timer-total');
+          const accEl = document.getElementById('timer-acc');
+          if (totalEl) totalEl.textContent = formatDuration(Date.now() - autoStartAt);
+          if (accEl && currentAccountStart) accEl.textContent = formatDuration(Date.now() - currentAccountStart);
+        }, 500);
+      }
+
+      function stopAutoTimer(finalLabel = 'Hoàn thành sau') {
+        const elapsed = autoStartAt ? formatDuration(Date.now() - autoStartAt) : '00:00';
+        if (autoTimer) clearInterval(autoTimer);
+        autoTimer = null;
+        $('oauth-elapsed').style.display = 'block';
+        $('oauth-elapsed').innerHTML = `⏱ ${finalLabel}: ${elapsed}`;
+        return elapsed;
+      }
+
+      // Mode switching
+      document.querySelectorAll('.oauth-mode-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.oauth-mode-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          $('oauth-auto-section').style.display = btn.dataset.mode === 'auto' ? '' : 'none';
+          $('oauth-manual-section').style.display = btn.dataset.mode === 'manual' ? '' : 'none';
+        });
+      });
+
+      // Normalize account lines: auto-detect tab / comma / semicolon / multi-space
+      // separators and convert to pipe format  email|password|2fa
+      function normalizeAccountLine(line) {
+        line = line.trim();
+        if (!line || line.startsWith('#')) return line;
+        // Already pipe-separated?
+        if (line.includes('|')) return line;
+        // Try tab
+        if (line.includes('\t')) return line.split('\t').map(s => s.trim()).join('|');
+        // Try semicolon
+        if (line.includes(';')) return line.split(';').map(s => s.trim()).join('|');
+        // Try comma (but only if there's no @ after a comma — avoid splitting emails)
+        if (line.includes(',')) {
+          const parts = line.split(',').map(s => s.trim());
+          if (parts.length >= 2 && parts[0].includes('@')) return parts.join('|');
+        }
+        // Try 2+ spaces
+        if (/\s{2,}/.test(line)) return line.split(/\s{2,}/).map(s => s.trim()).join('|');
+        return line;
+      }
+
+      function normalizeAllLines(text) {
+        return text.split('\n').map(normalizeAccountLine).join('\n');
+      }
+
+      // Parse accounts textarea
+      function parseAccounts() {
+        const text = $('oauth-accounts-input').value.trim();
+        if (!text) return [];
+        return text.split('\n')
+          .map(normalizeAccountLine)
+          .filter(l => l && !l.startsWith('#'))
+          .map(l => {
+            const parts = l.split('|');
+            return { email: parts[0]?.trim() || '', password: parts[1]?.trim() || '', totp: parts[2]?.trim() || '', raw: parts.join('|') };
+          })
+          .filter(a => a.email && a.password);
+      }
+
+      // Auto-format on paste: convert tabs/commas/etc to pipes visually
+      $('oauth-accounts-input').addEventListener('paste', (e) => {
+        setTimeout(() => {
+          const ta = $('oauth-accounts-input');
+          const normalized = normalizeAllLines(ta.value);
+          if (normalized !== ta.value) {
+            ta.value = normalized;
+          }
+          ta.dispatchEvent(new Event('input'));
+        }, 50);
+      });
+
+      $('oauth-accounts-input').addEventListener('input', () => {
+        const accs = parseAccounts();
+        const stats = $('oauth-parse-stats');
+        if (accs.length) {
+          stats.style.display = 'grid';
+          $('oa-parsed').textContent = accs.length;
+          $('oa-2fa').textContent = accs.filter(a => a.totp).length;
+        } else {
+          stats.style.display = 'none';
+        }
+      });
+
+      // Auto login button
+      $('btn-auto-login').addEventListener('click', async () => {
+        const accs = parseAccounts();
+        if (!accs.length) { showMsg('oauth-msg', 'Chưa nhập tài khoản!', 'err'); return }
+        if (!serverOnline) { showMsg('oauth-msg', 'Server offline!', 'err'); return }
+
+        $('btn-auto-login').disabled = true;
+        $('btn-auto-login').textContent = '⏳ Đang khởi động...';
+        $('btn-auto-stop').style.display = '';
+        hideMsg('oauth-msg');
+        $('oauth-progress').style.display = 'block';
+        $('oauth-progress-bar').style.width = '0%';
+        $('oauth-progress-text').textContent = `0/${accs.length} — Đang khởi động...`;
+        startAutoTimer();
+        currentAccountStart = Date.now();
+        lastCurrentEmail = null;
+
+        try {
+          const runHeadless = $('oauth-headless-toggle').checked;
+          const workers = Number.parseInt($('oauth-workers-input').value, 10);
+          if (!Number.isInteger(workers) || workers < 1) {
+            throw new Error('Số luồng phải là số nguyên lớn hơn 0');
+          }
+          const notice = workers > accs.length
+            ? ` | yêu cầu ${workers} luồng, thực tế ${accs.length}`
+            : ` | ${workers} luồng song song`;
+          $('oauth-progress-text').textContent = `0/${accs.length} — Đang khởi động${notice}...`;
+          const r = await fetch(API + '/api/oauth/auto-login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ accounts: accs.map(a => a.raw), headless: runHeadless, workers })
+          });
+          const d = await r.json();
+          if (d.error) {
+            showMsg('oauth-msg', '❌ ' + d.error, 'err');
+            stopAutoTimer('Dừng sau');
+            $('btn-auto-login').disabled = false;
+            $('btn-auto-login').textContent = '🚀 Auto Login tất cả';
+            $('btn-auto-stop').style.display = 'none';
+            return;
+          }
+          // Start polling status
+          startAutoPolling(accs.length);
+        } catch (e) {
+          showMsg('oauth-msg', 'Lỗi: ' + e.message, 'err');
+          stopAutoTimer('Lỗi sau');
+          $('btn-auto-login').disabled = false;
+          $('btn-auto-login').textContent = '🚀 Auto Login tất cả';
+          $('btn-auto-stop').style.display = 'none';
+        }
+      });
+
+      $('btn-auto-stop').addEventListener('click', async () => {
+        if (!serverOnline) return;
+        $('btn-auto-stop').disabled = true;
+        $('btn-auto-stop').textContent = '⏳ Đang dừng...';
+        try {
+          const r = await fetch(API + '/api/oauth/auto-stop', { method: 'POST' });
+          const d = await r.json();
+          if (autoPolling) { clearInterval(autoPolling); autoPolling = null; }
+          $('btn-auto-login').disabled = false;
+          $('btn-auto-login').textContent = '🚀 Auto Login tất cả';
+          $('btn-auto-stop').style.display = 'none';
+          $('btn-auto-stop').disabled = false;
+          $('btn-auto-stop').textContent = '⏹ Dừng';
+          stopAutoTimer('Đã dừng sau');
+          $('oauth-progress-text').textContent = d.killed ? '⏹ Đã dừng auto login và tắt Chrome nền' : '⏹ Đã gửi lệnh dừng';
+          showMsg('oauth-msg', d.killed ? '⏹ Đã dừng auto login và tắt Chrome nền.' : '⏹ Đã dừng auto login.', 'err');
+        } catch (e) {
+          $('btn-auto-stop').disabled = false;
+          $('btn-auto-stop').textContent = '⏹ Dừng';
+          showMsg('oauth-msg', 'Lỗi khi dừng: ' + e.message, 'err');
+        }
+      });
+
+      function startAutoPolling(total) {
+        if (autoPolling) clearInterval(autoPolling);
+        autoPolling = setInterval(async () => {
+          try {
+            const r = await fetch(API + '/api/oauth/auto-status');
+            const d = await r.json();
+
+            const done = (d.done || 0) + (d.failed || 0);
+            const pct = total > 0 ? Math.round(done / total * 100) : 0;
+            $('oauth-progress-bar').style.width = pct + '%';
+            const totalElapsed = autoStartAt ? formatDuration(Date.now() - autoStartAt) : '00:00';
+            const accElapsed = currentAccountStart ? formatDuration(Date.now() - currentAccountStart) : '00:00';
+            const mode = d.mode ? ` — ${d.mode}` : '';
+            const workerInfo = d.workersRunning ? ` | ${d.workersRunning}/${d.workersRequested || d.workersRunning} luồng` : '';
+            $('oauth-progress-text').textContent = `${done}/${total} — ⏱ ${totalElapsed}${mode}${workerInfo}`;
+            const active = Array.isArray(d.activeAccounts) ? d.activeAccounts : [];
+            const activeEl = $('oauth-active-workers');
+            activeEl.style.display = active.length ? 'block' : 'none';
+            activeEl.textContent = active.length ? `⚡ Đang chạy (${active.length}): ${active.join(' • ')}` : '';
+
+            $('oa-done').textContent = d.done || 0;
+            $('oa-fail').textContent = d.failed || 0;
+            $('oa-fail').className = 'stat-val' + ((d.failed || 0) > 0 ? ' red' : '');
+
+            // Track when current account changes
+            if (d.currentEmail && d.currentEmail !== lastCurrentEmail) {
+              lastCurrentEmail = d.currentEmail;
+              currentAccountStart = Date.now();
+              // Pre-insert with _startedAt so we can calculate duration later
+              const existIdx = oauthHistory.findIndex(x => x.email === d.currentEmail);
+              if (existIdx < 0) {
+                oauthHistory.push({ email: d.currentEmail, _startedAt: Date.now(), status: 'pending' });
+              } else if (!oauthHistory[existIdx]._startedAt) {
+                oauthHistory[existIdx]._startedAt = Date.now();
+              }
+            }
+
+            // Update history from results. Upsert by email so each account shows
+            // once with its latest/final status instead of duplicated summary rows.
+            if (d.results && d.results.length) {
+              let changed = false;
+              for (const r of d.results) {
+                if (!r.email) continue;
+                // Calculate per-account duration
+                let accDuration = '';
+                const existing = oauthHistory.find(x => x.email === r.email);
+                if (existing && existing._startedAt) {
+                  accDuration = formatDuration(Date.now() - existing._startedAt);
+                } else if (currentAccountStart) {
+                  accDuration = formatDuration(Date.now() - currentAccountStart);
+                }
+                const item = {
+                  email: r.email,
+                  plan: r.plan || '',
+                  time: new Date().toLocaleTimeString(),
+                  duration: accDuration,
+                  hasRefresh: r.hasRefresh || false,
+                  status: r.status,
+                  error: r.error || '',
+                };
+                const idx = oauthHistory.findIndex(x => x.email === r.email);
+                if (idx >= 0) oauthHistory[idx] = { ...oauthHistory[idx], ...item };
+                else oauthHistory.push(item);
+                changed = true;
+              }
+              if (changed) renderOAuthHistory();
+            }
+
+            if (!d.running) {
+              clearInterval(autoPolling);
+              autoPolling = null;
+              $('btn-auto-login').disabled = false;
+              $('btn-auto-login').textContent = '🚀 Auto Login tất cả';
+              $('btn-auto-stop').style.display = 'none';
+              const elapsed = stopAutoTimer(d.stopped ? 'Đã dừng sau' : 'Hoàn thành sau');
+              if (d.stopped) {
+                $('oauth-progress-text').textContent = `⏹ Đã dừng — ${elapsed}`;
+                showMsg('oauth-msg', `⏹ Đã dừng auto login — thời gian: ${elapsed}`, 'err');
+              } else {
+                $('oauth-progress-text').textContent = `✅ Hoàn thành! ${d.done || 0} thành công, ${d.failed || 0} lỗi — ${elapsed}`;
+                showMsg('oauth-msg', `✅ Hoàn thành! ${d.done || 0} thành công, ${d.failed || 0} lỗi — thời gian: ${elapsed}`, 'ok');
+              }
+              loadAccounts();
+            }
+          } catch {}
+        }, 500);
+      }
+
+      // Manual login
+      $('btn-oauth-login').addEventListener('click', async () => {
+        if (!serverOnline) { showMsg('oauth-msg', 'Server offline!', 'err'); return }
+        
+        $('btn-oauth-login').disabled = true;
+        $('btn-oauth-login').textContent = '⏳ Đang mở trình duyệt...';
+        hideMsg('oauth-msg');
+        
+        // Show status box
+        const box = $('oauth-status-box');
+        box.style.display = 'block';
+        $('oauth-status-icon').textContent = '⏳';
+        $('oauth-status-text').textContent = 'Đang mở trang đăng nhập OpenAI...';
+        
+        try {
+          const r = await fetch(API + '/api/oauth/start', { method: 'POST' });
+          const d = await r.json();
+          if (d.error) {
+            showMsg('oauth-msg', '❌ ' + d.error, 'err');
+            resetOAuthBtn();
+            box.style.display = 'none';
+            return;
+          }
+          
+          $('oauth-status-icon').textContent = '🔑';
+          $('oauth-status-text').innerHTML = 'Đang chờ đăng nhập trên trình duyệt...<br><span style="color:var(--muted);font-size:.8rem">Sau khi login xong, kết quả sẽ tự động hiện ở đây</span>';
+          
+          // Poll for result
+          startOAuthPolling();
+        } catch (e) {
+          showMsg('oauth-msg', 'Lỗi: ' + e.message, 'err');
+          resetOAuthBtn();
+          box.style.display = 'none';
+        }
+      });
+
+      function resetOAuthBtn() {
+        $('btn-oauth-login').disabled = false;
+        $('btn-oauth-login').textContent = '🚀 Login ChatGPT (OAuth)';
+      }
+
+      function startOAuthPolling() {
+        if (oauthPolling) clearInterval(oauthPolling);
+        let polls = 0;
+        oauthPolling = setInterval(async () => {
+          polls++;
+          if (polls > 120) { // 2 minutes
+            clearInterval(oauthPolling);
+            oauthPolling = null;
+            $('oauth-status-icon').textContent = '⏰';
+            $('oauth-status-text').textContent = 'Timeout — hết thời gian chờ đăng nhập.';
+            showMsg('oauth-msg', '⏰ Timeout. Bấm Login lại để thử.', 'err');
+            resetOAuthBtn();
+            return;
+          }
+          
+          try {
+            const r = await fetch(API + '/api/oauth/status');
+            const d = await r.json();
+            
+            if (d.status === 'success') {
+              clearInterval(oauthPolling);
+              oauthPolling = null;
+              $('oauth-status-icon').textContent = '✅';
+              $('oauth-status-text').innerHTML = `<strong style="color:var(--green)">${esc(d.email)}</strong> — ${esc(d.plan || 'free')}<br>Refresh token: ${d.hasRefresh ? '✅ Có' : '❌ Không'}<br>Thêm mới: ${d.inserted}, Ghi đè: ${d.replaced || 0}`;
+              showMsg('oauth-msg', `✅ Login thành công! ${esc(d.email)}`, 'ok');
+              
+              // Add to history
+              oauthHistory.unshift({ email: d.email, plan: d.plan, time: new Date().toLocaleTimeString(), hasRefresh: d.hasRefresh });
+              renderOAuthHistory();
+              resetOAuthBtn();
+              loadAccounts();
+            } else if (d.status === 'error') {
+              clearInterval(oauthPolling);
+              oauthPolling = null;
+              $('oauth-status-icon').textContent = '❌';
+              $('oauth-status-text').textContent = d.error || 'Login thất bại';
+              showMsg('oauth-msg', '❌ ' + (d.error || 'Login thất bại'), 'err');
+              resetOAuthBtn();
+            }
+            // else: still waiting, continue polling
+          } catch {}
+        }, 1000);
+      }
+
+      function renderOAuthHistory() {
+        const el = $('oauth-history');
+        const visible = oauthHistory.filter(h => h.status && h.status !== 'pending');
+        if (!visible.length) { el.innerHTML = ''; return }
+        el.innerHTML = '<div style="font-size:.82rem;color:var(--muted);margin-bottom:6px">Lịch sử login phiên này:</div>' +
+          visible.map(h => {
+            const isErr = h.status === 'error';
+            const icon = isErr ? '❌' : '✅';
+            const detail = isErr ? `<span style="color:var(--red);font-size:.7rem">${esc(h.error || 'failed')}</span>` :
+              `<span class="tag tag-plus" style="font-size:.7rem">${esc(h.plan || 'free')}</span>
+               <span style="font-size:.7rem;color:var(--muted)">${h.hasRefresh ? '🔑 rt' : '⚠️ no rt'}</span>`;
+            return `<div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--surface2);border-radius:6px;margin-bottom:4px;font-size:.82rem">
+              <span>${icon}</span>
+              <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(h.email)}</span>
+              ${detail}
+              <span style="color:var(--muted);font-size:.75rem">${h.duration ? '⏱ ' + h.duration : h.time}</span>
+            </div>`;
+          }).join('');
+      }
+
+      // === Helpers ===
+      function showMsg(id, text, type) { const el = $(id); el.textContent = text; el.className = 'msg show ' + type }
+      function hideMsg(id) { $(id).className = 'msg' }
+
+      // === Tabs ===
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+          document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+          btn.classList.add('active');
+          $('tab-' + btn.dataset.tab).classList.remove('hidden');
+          if (btn.dataset.tab === 'accounts') loadAccounts();
+        });
+      });
+
+    })();
+  </script>
+</body>
+
+</html>
